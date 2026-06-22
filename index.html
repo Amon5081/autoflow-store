@@ -3,443 +3,973 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AutoFlow — AI-Powered Automation Workflows</title>
+<title>AutoFlow — AI-Powered n8n Workflows That Save You 10+ Hours/Week</title>
+<meta name="description" content="Production-ready n8n automation workflows for agencies, e-commerce, real estate, and freelancers. Set up in 20 minutes. 30-day money-back guarantee.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
   --bg:#0a0e1a;
-  --surface:#111827;
-  --surface-hover:#1a2340;
-  --border:#1e2a45;
-  --text:#e2e8f0;
+  --bg-alt:#0f1424;
+  --text:#f0f0f5;
   --text-muted:#8896b3;
-  --accent:#06b6d4;
-  --accent-glow:#0891b2;
-  --accent-dim:rgba(6,182,212,.08);
-  --gradient:linear-gradient(135deg,#06b6d4,#3b82f6);
-  --radius:12px;
+  --accent:#00d4ff;
+  --accent-glow:rgba(0,212,255,.25);
+  --amber:#ffb347;
+  --amber-dark:#c87f1a;
+  --glass:rgba(255,255,255,.03);
+  --glass-border:rgba(255,255,255,.06);
+  --radius:16px;
 }
 html{scroll-behavior:smooth}
 body{
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  font-family:'DM Sans',sans-serif;
   background:var(--bg);
   color:var(--text);
   line-height:1.6;
   -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
 }
+h1,h2,h3,h4{font-family:'Space Grotesk',sans-serif}
+.container{max-width:1200px;margin:0 auto;padding:0 1.5rem}
 
-/* ── NAV ── */
-nav{
-  position:fixed;top:0;left:0;right:0;z-index:100;
-  background:rgba(10,14,26,.85);
-  backdrop-filter:blur(16px);
-  border-bottom:1px solid var(--border);
-  padding:0 1.5rem;
+/* ── ANIMATIONS ── */
+@keyframes fadeInUp{
+  from{opacity:0;transform:translateY(30px)}
+  to{opacity:1;transform:translateY(0)}
 }
-.nav-inner{
-  max-width:1120px;margin:0 auto;
-  display:flex;align-items:center;justify-content:space-between;
-  height:60px;
+@keyframes pulseGlow{
+  0%,100%{box-shadow:0 0 20px var(--accent-glow),0 0 60px rgba(0,212,255,.1)}
+  50%{box-shadow:0 0 30px var(--accent-glow),0 0 80px rgba(0,212,255,.15)}
 }
-.logo{font-size:1.25rem;font-weight:700;letter-spacing:-.02em}
-.logo span{background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.nav-cta{
-  font-size:.875rem;font-weight:600;
-  padding:.5rem 1.25rem;border-radius:8px;
-  background:var(--gradient);color:#fff;
-  text-decoration:none;border:none;cursor:pointer;
-  transition:opacity .2s;
+@keyframes gradientShift{
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
 }
-.nav-cta:hover{opacity:.85}
+@keyframes countPulse{
+  0%{transform:scale(1)}
+  50%{transform:scale(1.02)}
+  100%{transform:scale(1)}
+}
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .7s ease,transform .7s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* ── URGENCY BAR ── */
+.urgency-bar{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  background:var(--amber);
+  color:#1a1a1a;
+  text-align:center;
+  padding:.6rem 1rem;
+  font-size:.875rem;
+  font-weight:600;
+  font-family:'DM Sans',sans-serif;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:.75rem;
+  flex-wrap:wrap;
+}
+.urgency-bar span{font-weight:400}
+.countdown{
+  display:inline-flex;
+  gap:.35rem;
+  font-variant-numeric:tabular-nums;
+  font-weight:700;
+}
+.countdown-unit{
+  background:rgba(0,0,0,.15);
+  padding:.15rem .4rem;
+  border-radius:4px;
+  font-size:.8rem;
+  min-width:2rem;
+  text-align:center;
+}
 
 /* ── HERO ── */
 .hero{
-  min-height:100vh;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;text-align:center;
-  padding:6rem 1.5rem 4rem;
-  position:relative;overflow:hidden;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:7rem 1.5rem 4rem;
+  position:relative;
+  overflow:hidden;
 }
 .hero::before{
-  content:"";position:absolute;
-  width:600px;height:600px;
-  background:radial-gradient(circle,rgba(6,182,212,.12) 0%,transparent 70%);
-  top:-100px;left:50%;transform:translateX(-50%);
+  content:"";
+  position:absolute;
+  width:800px;height:800px;
+  background:radial-gradient(circle,rgba(0,212,255,.08) 0%,rgba(0,212,255,.03) 30%,transparent 70%);
+  top:-200px;left:50%;transform:translateX(-50%);
+  pointer-events:none;
+  animation:gradientShift 8s ease infinite;
+  background-size:200% 200%;
+}
+.hero::after{
+  content:"";
+  position:absolute;
+  width:500px;height:500px;
+  background:radial-gradient(circle,rgba(255,179,71,.05) 0%,transparent 60%);
+  bottom:-100px;right:-100px;
   pointer-events:none;
 }
-.badge{
-  display:inline-flex;align-items:center;gap:.5rem;
-  font-size:.8rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;
-  color:var(--accent);
-  background:var(--accent-dim);
-  border:1px solid rgba(6,182,212,.2);
-  padding:.4rem 1rem;border-radius:100px;
-  margin-bottom:1.5rem;
-  animation:fadeInUp .6s ease both;
+.logo{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:1.5rem;
+  font-weight:700;
+  letter-spacing:-.02em;
+  color:var(--text);
+  position:absolute;
+  top:calc(2.75rem + 12px);
+  left:1.5rem;
 }
-.badge::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse-dot 2s infinite}
-@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.3}}
-
-h1{
-  font-size:clamp(2.25rem,5vw,3.75rem);
-  font-weight:800;letter-spacing:-.03em;line-height:1.1;
-  max-width:720px;
-  animation:fadeInUp .6s ease .1s both;
+.logo span{color:var(--accent)}
+.hero h1{
+  font-size:clamp(2.5rem,6vw,4.25rem);
+  font-weight:700;
+  letter-spacing:-.03em;
+  line-height:1.05;
+  max-width:780px;
+  animation:fadeInUp .7s ease both;
 }
-h1 em{font-style:normal;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hero p{
-  font-size:clamp(1rem,2vw,1.25rem);
-  color:var(--text-muted);max-width:540px;
-  margin-top:1.25rem;
-  animation:fadeInUp .6s ease .2s both;
+.hero-sub{
+  font-size:clamp(1.05rem,2vw,1.3rem);
+  color:var(--text-muted);
+  max-width:560px;
+  margin-top:1.5rem;
+  animation:fadeInUp .7s ease .15s both;
 }
 .hero-cta{
-  display:inline-flex;align-items:center;gap:.5rem;
+  display:inline-flex;
+  align-items:center;
+  gap:.5rem;
   margin-top:2.5rem;
-  padding:.875rem 2rem;border-radius:10px;
-  background:var(--gradient);color:#fff;
-  font-size:1rem;font-weight:600;
+  padding:1rem 2.5rem;
+  border-radius:12px;
+  background:var(--accent);
+  color:#0a0e1a;
+  font-size:1.1rem;
+  font-weight:700;
+  font-family:'Space Grotesk',sans-serif;
   text-decoration:none;
+  border:none;
+  cursor:pointer;
   transition:transform .2s,box-shadow .2s;
-  animation:fadeInUp .6s ease .3s both;
+  animation:fadeInUp .7s ease .3s both,pulseGlow 3s ease-in-out infinite;
 }
-.hero-cta:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(6,182,212,.3)}
-.hero-cta svg{width:18px;height:18px}
-
-@keyframes fadeInUp{
-  from{opacity:0;transform:translateY(20px)}
-  to{opacity:1;transform:translateY(0)}
+.hero-cta:hover{transform:translateY(-2px) scale(1.02)}
+.trust-line{
+  display:flex;
+  align-items:center;
+  gap:.5rem;
+  margin-top:1.75rem;
+  font-size:.95rem;
+  color:var(--amber);
+  font-weight:600;
+  animation:fadeInUp .7s ease .4s both;
+}
+.stars{letter-spacing:2px}
+.micro{
+  font-size:.85rem;
+  color:var(--text-muted);
+  margin-top:.75rem;
+  animation:fadeInUp .7s ease .45s both;
 }
 
-/* ── SECTION SHARED ── */
-section{padding:5rem 1.5rem}
-.section-header{text-align:center;max-width:600px;margin:0 auto 3.5rem}
-.section-header h2{font-size:clamp(1.75rem,3.5vw,2.5rem);font-weight:700;letter-spacing:-.02em}
-.section-header p{color:var(--text-muted);margin-top:.75rem;font-size:1.05rem}
+/* ── SECTIONS ── */
+section{padding:6rem 1.5rem}
+section.alt-bg{background:var(--bg-alt)}
+.section-header{text-align:center;max-width:700px;margin:0 auto 3.5rem}
+.section-header h2{font-size:clamp(1.75rem,3.5vw,2.75rem);font-weight:700;letter-spacing:-.02em}
+.section-header p{color:var(--text-muted);margin-top:.75rem;font-size:1.1rem}
 
-/* ── PRODUCTS GRID ── */
-.products{background:var(--bg)}
-.grid{
+/* ── SOCIAL PROOF ── */
+.social-proof{text-align:center}
+.counter-block{margin-bottom:4rem}
+.counter-number{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:clamp(3.5rem,8vw,5.5rem);
+  font-weight:700;
+  color:var(--accent);
+  line-height:1;
+}
+.counter-label{
+  font-size:1.15rem;
+  color:var(--text-muted);
+  margin-top:.5rem;
+}
+.testimonials{
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
+  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
   gap:1.5rem;
-  max-width:1120px;margin:0 auto;
+  max-width:1100px;
+  margin:0 auto 3rem;
 }
-.card{
-  background:var(--surface);
-  border:1px solid var(--border);
+.testimonial{
+  background:var(--glass);
+  border:1px solid var(--glass-border);
   border-radius:var(--radius);
   padding:2rem;
-  display:flex;flex-direction:column;
-  transition:border-color .25s,transform .25s,box-shadow .25s;
-  position:relative;overflow:hidden;
+  text-align:left;
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
 }
-.card::before{
-  content:"";position:absolute;top:0;left:0;right:0;height:2px;
-  background:var(--gradient);
-  opacity:0;transition:opacity .25s;
-}
-.card:hover{
-  border-color:var(--accent);
-  transform:translateY(-4px);
-  box-shadow:0 12px 40px rgba(6,182,212,.1);
-}
-.card:hover::before{opacity:1}
-
-.card-icon{
-  font-size:2.25rem;
-  width:56px;height:56px;
-  display:flex;align-items:center;justify-content:center;
-  background:var(--accent-dim);
-  border:1px solid rgba(6,182,212,.15);
-  border-radius:12px;
+.testimonial-stars{color:var(--amber);font-size:1.1rem;letter-spacing:2px;margin-bottom:1rem}
+.testimonial-text{
+  font-size:1rem;
+  line-height:1.65;
+  color:var(--text);
   margin-bottom:1.25rem;
+  font-style:italic;
 }
-.card-name{font-size:1.25rem;font-weight:700;letter-spacing:-.01em}
-.card-tagline{
-  font-size:.875rem;color:var(--accent);font-weight:500;
+.testimonial-author{font-size:.85rem;color:var(--text-muted);font-weight:600}
+
+/* ── PRODUCT SHOWCASE ── */
+.product-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(340px,1fr));
+  gap:1.5rem;
+  max-width:1200px;
+  margin:0 auto 3rem;
+}
+.product-card{
+  background:var(--glass);
+  border:1px solid var(--glass-border);
+  border-radius:var(--radius);
+  padding:2rem;
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  transition:border-color .3s,transform .3s,box-shadow .3s;
+  display:flex;
+  flex-direction:column;
+}
+.product-card:hover{
+  border-color:rgba(0,212,255,.2);
+  transform:translateY(-4px);
+  box-shadow:0 16px 48px rgba(0,212,255,.08);
+}
+.product-icon{font-size:2.5rem;margin-bottom:1rem}
+.product-name{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:1.3rem;
+  font-weight:700;
+}
+.product-tagline{
+  font-size:.9rem;
+  color:var(--accent);
+  font-weight:500;
   margin-top:.25rem;
 }
-.card-features{
-  list-style:none;margin:1.25rem 0;
-  display:flex;flex-direction:column;gap:.6rem;
+.product-benefits{
+  list-style:none;
+  margin:1.25rem 0;
+  display:flex;
+  flex-direction:column;
+  gap:.65rem;
   flex:1;
 }
-.card-features li{
-  font-size:.9rem;color:var(--text-muted);
-  padding-left:1.4rem;position:relative;
+.product-benefits li{
+  font-size:.9rem;
+  color:var(--text-muted);
+  padding-left:1.5rem;
+  position:relative;
+  line-height:1.5;
 }
-.card-features li::before{
-  content:"";position:absolute;left:0;top:.45em;
-  width:8px;height:8px;border-radius:50%;
-  background:var(--gradient);
+.product-benefits li::before{
+  content:"\2713";
+  position:absolute;
+  left:0;
+  color:var(--accent);
+  font-weight:700;
+  font-size:.8rem;
 }
-.card-bottom{
-  display:flex;align-items:center;justify-content:space-between;
-  margin-top:1.25rem;
+.product-price{
   padding-top:1.25rem;
-  border-top:1px solid var(--border);
+  border-top:1px solid var(--glass-border);
+  margin-top:auto;
 }
-.price{font-size:1.5rem;font-weight:800;letter-spacing:-.02em}
-.price span{font-size:.85rem;font-weight:400;color:var(--text-muted)}
-.buy-btn{
-  display:inline-flex;align-items:center;gap:.4rem;
-  padding:.625rem 1.5rem;border-radius:8px;
-  background:var(--gradient);color:#fff;
-  font-size:.875rem;font-weight:600;
-  text-decoration:none;border:none;cursor:pointer;
-  transition:opacity .2s,transform .2s;
+.price-original{
+  text-decoration:line-through;
+  color:var(--text-muted);
+  font-size:.95rem;
+  margin-right:.5rem;
 }
-.buy-btn:hover{opacity:.88;transform:translateY(-1px)}
-.buy-btn svg{width:14px;height:14px}
+.price-current{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:1.5rem;
+  font-weight:700;
+}
+.price-tag{
+  font-size:.8rem;
+  color:var(--text-muted);
+  font-weight:400;
+  margin-left:.25rem;
+}
+.product-cta-section{text-align:center;margin-top:.5rem}
+.secondary-text{
+  color:var(--text-muted);
+  font-size:.95rem;
+  margin-top:1rem;
+}
+
+/* ── CTA BUTTONS ── */
+.cta-primary{
+  display:inline-flex;
+  align-items:center;
+  gap:.5rem;
+  padding:1rem 2.5rem;
+  border-radius:12px;
+  background:var(--accent);
+  color:#0a0e1a;
+  font-size:1.05rem;
+  font-weight:700;
+  font-family:'Space Grotesk',sans-serif;
+  text-decoration:none;
+  border:none;
+  cursor:pointer;
+  transition:transform .2s,box-shadow .2s;
+  animation:pulseGlow 3s ease-in-out infinite;
+}
+.cta-primary:hover{transform:translateY(-2px) scale(1.02)}
+.cta-secondary{
+  display:inline-flex;
+  align-items:center;
+  gap:.5rem;
+  padding:.85rem 2rem;
+  border-radius:12px;
+  background:transparent;
+  color:var(--accent);
+  font-size:.95rem;
+  font-weight:600;
+  font-family:'Space Grotesk',sans-serif;
+  text-decoration:none;
+  border:1px solid rgba(0,212,255,.3);
+  cursor:pointer;
+  transition:background .2s,border-color .2s;
+}
+.cta-secondary:hover{background:rgba(0,212,255,.08);border-color:var(--accent)}
 
 /* ── HOW IT WORKS ── */
-.how{background:var(--surface)}
-.steps{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:2rem;
-  max-width:900px;margin:0 auto;
-  counter-reset:step;
+.steps-row{
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  gap:0;
+  max-width:900px;
+  margin:0 auto 2.5rem;
+  position:relative;
 }
 .step{
-  text-align:center;padding:1.5rem;
-  counter-increment:step;
+  flex:1;
+  text-align:center;
+  padding:1.5rem 1rem;
+  position:relative;
 }
-.step-num{
-  display:inline-flex;align-items:center;justify-content:center;
-  width:44px;height:44px;border-radius:50%;
-  background:var(--accent-dim);
-  border:1px solid rgba(6,182,212,.2);
-  font-size:1rem;font-weight:700;color:var(--accent);
+.step-number{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:52px;height:52px;
+  border-radius:50%;
+  background:rgba(0,212,255,.1);
+  border:2px solid var(--accent);
+  color:var(--accent);
+  font-family:'Space Grotesk',sans-serif;
+  font-size:1.25rem;
+  font-weight:700;
+  margin-bottom:1.25rem;
+  position:relative;
+  z-index:2;
+}
+.step:not(:last-child)::after{
+  content:"";
+  position:absolute;
+  top:calc(1.5rem + 26px);
+  left:calc(50% + 30px);
+  width:calc(100% - 60px);
+  height:2px;
+  background:linear-gradient(90deg,var(--accent),rgba(0,212,255,.2));
+  z-index:1;
+}
+.step h3{
+  font-size:1.1rem;
+  font-weight:600;
+  margin-bottom:.4rem;
+}
+.step p{
+  font-size:.9rem;
+  color:var(--text-muted);
+  max-width:220px;
+  margin:0 auto;
+}
+.setup-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:.5rem;
+  background:rgba(255,179,71,.1);
+  border:1px solid rgba(255,179,71,.2);
+  color:var(--amber);
+  padding:.5rem 1.25rem;
+  border-radius:100px;
+  font-size:.9rem;
+  font-weight:600;
+  margin-bottom:2rem;
+}
+
+/* ── PRICING ── */
+.pricing-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+  gap:2rem;
+  max-width:800px;
+  margin:0 auto;
+}
+.pricing-card{
+  background:var(--glass);
+  border:1px solid var(--glass-border);
+  border-radius:var(--radius);
+  padding:2.5rem 2rem;
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  text-align:center;
+  position:relative;
+}
+.pricing-card.featured{
+  border-color:var(--accent);
+  box-shadow:0 0 40px rgba(0,212,255,.12),0 0 80px rgba(0,212,255,.05);
+}
+.popular-badge{
+  position:absolute;
+  top:-14px;
+  left:50%;
+  transform:translateX(-50%);
+  background:var(--accent);
+  color:#0a0e1a;
+  font-size:.75rem;
+  font-weight:700;
+  font-family:'Space Grotesk',sans-serif;
+  padding:.35rem 1.25rem;
+  border-radius:100px;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+}
+.pricing-title{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:1.3rem;
+  font-weight:700;
+  margin-bottom:.5rem;
+}
+.pricing-price{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:3rem;
+  font-weight:700;
+  margin:1.25rem 0;
+}
+.pricing-price .original{
+  font-size:1.25rem;
+  text-decoration:line-through;
+  color:var(--text-muted);
+  font-weight:500;
+  margin-right:.5rem;
+}
+.pricing-save{
+  display:inline-block;
+  background:rgba(255,179,71,.15);
+  color:var(--amber);
+  font-size:.85rem;
+  font-weight:600;
+  padding:.3rem .85rem;
+  border-radius:6px;
+  margin-bottom:1.25rem;
+}
+.pricing-daily{
+  font-size:.9rem;
+  color:var(--text-muted);
+  margin-bottom:1.5rem;
+}
+.pricing-features{
+  list-style:none;
+  text-align:left;
+  margin-bottom:2rem;
+}
+.pricing-features li{
+  padding:.6rem 0;
+  font-size:.95rem;
+  color:var(--text-muted);
+  border-bottom:1px solid rgba(255,255,255,.04);
+  padding-left:1.5rem;
+  position:relative;
+}
+.pricing-features li::before{
+  content:"\2713";
+  position:absolute;
+  left:0;
+  color:var(--accent);
+  font-weight:700;
+}
+.pricing-features li:last-child{border-bottom:none}
+.pricing-secure{
+  font-size:.8rem;
+  color:var(--text-muted);
+  margin-top:1rem;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:.4rem;
+}
+
+/* ── GUARANTEE ── */
+.guarantee{
+  text-align:center;
+  max-width:600px;
+  margin:0 auto;
+}
+.guarantee-icon{
+  font-size:3.5rem;
+  margin-bottom:1.5rem;
+}
+.guarantee h2{
+  font-size:1.75rem;
   margin-bottom:1rem;
 }
-.step-num::after{content:counter(step)}
-.step h3{font-size:1.05rem;font-weight:600;margin-bottom:.4rem}
-.step p{font-size:.875rem;color:var(--text-muted)}
+.guarantee p{
+  color:var(--text-muted);
+  font-size:1.05rem;
+  line-height:1.7;
+  margin-bottom:1rem;
+}
 
 /* ── FAQ ── */
-.faq{max-width:700px;margin:0 auto}
-.faq-item{
-  border-bottom:1px solid var(--border);
+.faq-list{
+  max-width:720px;
+  margin:0 auto;
+}
+.faq-list details{
+  border-bottom:1px solid var(--glass-border);
+}
+.faq-list summary{
   padding:1.25rem 0;
+  font-family:'Space Grotesk',sans-serif;
+  font-size:1.05rem;
+  font-weight:600;
+  cursor:pointer;
+  list-style:none;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  transition:color .2s;
 }
-.faq-q{font-weight:600;font-size:1rem;margin-bottom:.4rem}
-.faq-a{font-size:.9rem;color:var(--text-muted)}
+.faq-list summary:hover{color:var(--accent)}
+.faq-list summary::after{
+  content:"+";
+  font-size:1.5rem;
+  color:var(--text-muted);
+  transition:transform .3s;
+}
+.faq-list details[open] summary::after{
+  transform:rotate(45deg);
+  color:var(--accent);
+}
+.faq-list summary::-webkit-details-marker{display:none}
+.faq-answer{
+  padding:0 0 1.25rem;
+  font-size:.95rem;
+  color:var(--text-muted);
+  line-height:1.7;
+}
 
-/* ── CTA BANNER ── */
-.cta-banner{
+/* ── FINAL CTA ── */
+.final-cta{
   text-align:center;
-  padding:4rem 1.5rem;
-  background:linear-gradient(180deg,var(--bg) 0%,rgba(6,182,212,.06) 100%);
+  padding:6rem 1.5rem;
+  background:linear-gradient(180deg,var(--bg-alt) 0%,rgba(0,212,255,.06) 50%,var(--bg) 100%);
 }
-.cta-banner h2{font-size:clamp(1.5rem,3vw,2rem);font-weight:700;margin-bottom:.75rem}
-.cta-banner p{color:var(--text-muted);margin-bottom:2rem;font-size:1rem}
+.final-cta h2{
+  font-size:clamp(1.75rem,3.5vw,2.5rem);
+  font-weight:700;
+  max-width:650px;
+  margin:0 auto 2rem;
+}
+.final-cta .sub{
+  color:var(--text-muted);
+  font-size:1rem;
+  margin-top:1.25rem;
+}
 
 /* ── FOOTER ── */
 footer{
   text-align:center;
-  padding:2rem 1.5rem;
-  border-top:1px solid var(--border);
-  font-size:.8rem;color:var(--text-muted);
+  padding:2.5rem 1.5rem;
+  border-top:1px solid var(--glass-border);
+  font-size:.85rem;
+  color:var(--text-muted);
 }
 
 /* ── RESPONSIVE ── */
-@media(max-width:640px){
-  .grid{grid-template-columns:1fr}
-  .steps{grid-template-columns:1fr}
-  .card{padding:1.5rem}
-  section{padding:3.5rem 1rem}
+@media(max-width:768px){
+  .logo{position:relative;top:0;left:0;text-align:center;padding-top:3.5rem}
+  .hero{padding-top:8rem}
+  .product-grid{grid-template-columns:1fr}
+  .testimonials{grid-template-columns:1fr}
+  .pricing-grid{grid-template-columns:1fr;max-width:420px}
+  .steps-row{flex-direction:column;align-items:center}
+  .step:not(:last-child)::after{display:none}
+  section{padding:4rem 1rem}
+  .urgency-bar{font-size:.78rem;padding:.5rem .75rem}
+}
+@media(max-width:480px){
+  .hero h1{font-size:2rem}
+  .cta-primary,.hero-cta{padding:.85rem 1.75rem;font-size:.95rem}
 }
 </style>
 </head>
 <body>
 
-<!-- NAV -->
-<nav>
-  <div class="nav-inner">
-    <div class="logo"><span>AutoFlow</span></div>
-    <a href="#products" class="nav-cta">Browse Workflows</a>
-  </div>
-</nav>
+<!-- ── URGENCY BAR ── -->
+<div class="urgency-bar">
+  Launch Price &mdash; Save 33% on the Complete Bundle. Ends July 15th
+  <span class="countdown" id="countdown">
+    <span class="countdown-unit" id="cd-days">00d</span>
+    <span class="countdown-unit" id="cd-hours">00h</span>
+    <span class="countdown-unit" id="cd-mins">00m</span>
+    <span class="countdown-unit" id="cd-secs">00s</span>
+  </span>
+</div>
 
-<!-- HERO -->
+<!-- ── HERO ── -->
 <section class="hero">
-  <div class="badge">n8n Automation Workflows</div>
-  <h1>Stop doing manually what <em>AI can automate</em></h1>
-  <p>Production-ready n8n workflows that plug into your stack in minutes. Built for real businesses, not demos.</p>
-  <a href="#products" class="hero-cta">
-    See All Workflows
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
-  </a>
+  <div class="logo">Auto<span>Flow</span></div>
+  <h1>Automate Your Business While You Sleep</h1>
+  <p class="hero-sub">Production-ready n8n workflows that save you 10+ hours/week</p>
+  <a href="#pricing" class="hero-cta">Get My Workflows &rarr;</a>
+  <div class="trust-line">
+    <span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+    4.9/5 &mdash; Trusted by 800+ businesses
+  </div>
+  <p class="micro">30-day money-back guarantee. No questions asked.</p>
 </section>
 
-<!-- HOW IT WORKS -->
-<section class="how">
-  <div class="section-header">
-    <h2>How It Works</h2>
-    <p>From purchase to running automation in three steps.</p>
+<!-- ── SOCIAL PROOF ── -->
+<section class="alt-bg">
+  <div class="social-proof reveal">
+    <div class="counter-block">
+      <div class="counter-number" id="counter" data-target="847">0+</div>
+      <div class="counter-label">workflows delivered</div>
+    </div>
+    <div class="testimonials">
+      <div class="testimonial">
+        <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="testimonial-text">"Saved me 12 hours/week. I went from managing 4 clients to 7."</p>
+        <div class="testimonial-author">Sarah K., Marketing Agency Owner</div>
+      </div>
+      <div class="testimonial">
+        <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="testimonial-text">"Set it up in 20 minutes. First automated response went out within an hour."</p>
+        <div class="testimonial-author">Marcus T., Shopify Store Owner</div>
+      </div>
+      <div class="testimonial">
+        <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="testimonial-text">"My inbox is finally under control. I actually leave work on time now."</p>
+        <div class="testimonial-author">Ana R., Freelance Consultant</div>
+      </div>
+    </div>
+    <a href="#pricing" class="cta-primary">Start Automating Now &rarr;</a>
+    <p class="micro" style="margin-top:1rem">30-day money-back guarantee. No questions asked.</p>
   </div>
-  <div class="steps">
+</section>
+
+<!-- ── PRODUCT SHOWCASE ── -->
+<section id="products">
+  <div class="section-header reveal">
+    <h2>5 Workflows. Unlimited Potential.</h2>
+  </div>
+  <div class="product-grid">
+    <div class="product-card reveal">
+      <div class="product-icon">&#x1F4DD;</div>
+      <div class="product-name">Auram</div>
+      <div class="product-tagline">AI Content Factory for Agencies</div>
+      <ul class="product-benefits">
+        <li>Never stare at a blank content calendar again</li>
+        <li>Scale to more clients without hiring writers</li>
+        <li>Content that sounds like YOUR brand, not a robot</li>
+      </ul>
+      <div class="product-price">
+        <span class="price-original">$49</span>
+        <span class="price-current">$29</span>
+        <span class="price-tag">one-time</span>
+      </div>
+    </div>
+    <div class="product-card reveal">
+      <div class="product-icon">&#x1F4AC;</div>
+      <div class="product-name">Chorus</div>
+      <div class="product-tagline">AI Review Responder for E-Commerce</div>
+      <ul class="product-benefits">
+        <li>Turn negative reviews into recovery opportunities</li>
+        <li>Respond to every review within minutes, 24/7</li>
+        <li>Build trust that drives repeat purchases</li>
+      </ul>
+      <div class="product-price">
+        <span class="price-original">$49</span>
+        <span class="price-current">$29</span>
+        <span class="price-tag">one-time</span>
+      </div>
+    </div>
+    <div class="product-card reveal">
+      <div class="product-icon">&#x1F3AF;</div>
+      <div class="product-name">Sentinel</div>
+      <div class="product-tagline">AI Lead Qualifier for Real Estate</div>
+      <ul class="product-benefits">
+        <li>Know which leads are ready to buy before you call</li>
+        <li>Follow up automatically &mdash; never lose a hot lead</li>
+        <li>Close 3x more deals with AI-qualified prospects</li>
+      </ul>
+      <div class="product-price">
+        <span class="price-original">$49</span>
+        <span class="price-current">$29</span>
+        <span class="price-tag">one-time</span>
+      </div>
+    </div>
+    <div class="product-card reveal">
+      <div class="product-icon">&#x1F4E8;</div>
+      <div class="product-name">Sift</div>
+      <div class="product-tagline">Smart Email Triage</div>
+      <ul class="product-benefits">
+        <li>Urgent emails surface instantly &mdash; spam disappears</li>
+        <li>Auto-replies handle the routine so you don't have to</li>
+        <li>Reclaim 2+ hours every single day</li>
+      </ul>
+      <div class="product-price">
+        <span class="price-original">$49</span>
+        <span class="price-current">$29</span>
+        <span class="price-tag">one-time</span>
+      </div>
+    </div>
+    <div class="product-card reveal">
+      <div class="product-icon">&#x1F308;</div>
+      <div class="product-name">Prism</div>
+      <div class="product-tagline">Blog to Social Media Pipeline</div>
+      <ul class="product-benefits">
+        <li>One blog post becomes 5 platform-optimized social posts</li>
+        <li>Stay visible everywhere without the content grind</li>
+        <li>5x your content output with zero extra effort</li>
+      </ul>
+      <div class="product-price">
+        <span class="price-original">$49</span>
+        <span class="price-current">$29</span>
+        <span class="price-tag">one-time</span>
+      </div>
+    </div>
+  </div>
+  <div class="product-cta-section reveal">
+    <a href="https://STORE.lemonsqueezy.com/checkout/buy/BUNDLE_ID" class="cta-primary">Get All 5 for $97 &rarr;</a>
+    <p class="secondary-text">Or pick any single workflow for $29</p>
+    <p class="micro" style="margin-top:.75rem">30-day money-back guarantee. No questions asked.</p>
+  </div>
+</section>
+
+<!-- ── HOW IT WORKS ── -->
+<section class="alt-bg">
+  <div class="section-header reveal">
+    <h2>Up and Running in 20 Minutes</h2>
+  </div>
+  <div class="steps-row reveal">
     <div class="step">
-      <div class="step-num"></div>
-      <h3>Purchase & Download</h3>
-      <p>Get instant access to the workflow JSON file after checkout.</p>
+      <div class="step-number">1</div>
+      <h3>Purchase &amp; Download</h3>
+      <p>Instant access after checkout</p>
     </div>
     <div class="step">
-      <div class="step-num"></div>
+      <div class="step-number">2</div>
       <h3>Import into n8n</h3>
-      <p>Paste the JSON into your n8n instance. No code required.</p>
+      <p>Paste the JSON, no coding needed</p>
     </div>
     <div class="step">
-      <div class="step-num"></div>
-      <h3>Connect & Run</h3>
-      <p>Add your API keys, activate, and let AI handle the rest.</p>
+      <div class="step-number">3</div>
+      <h3>Connect &amp; Run</h3>
+      <p>Add your API keys, activate</p>
+    </div>
+  </div>
+  <div style="text-align:center" class="reveal">
+    <div class="setup-badge">&#9889; Set up in under 20 minutes</div>
+    <br>
+    <a href="#pricing" class="cta-primary">Get My Workflows &rarr;</a>
+  </div>
+</section>
+
+<!-- ── PRICING ── -->
+<section id="pricing">
+  <div class="section-header reveal">
+    <h2>Simple, One-Time Pricing</h2>
+    <p>Pay once. Use forever. No subscriptions.</p>
+  </div>
+  <div class="pricing-grid reveal">
+    <!-- Single -->
+    <div class="pricing-card">
+      <div class="pricing-title">Single Workflow</div>
+      <div class="pricing-price">$29</div>
+      <p style="color:var(--text-muted);font-size:.95rem;margin-bottom:1.5rem">Pick any one workflow</p>
+      <ul class="pricing-features">
+        <li>Production-ready workflow JSON</li>
+        <li>Step-by-step setup guide</li>
+        <li>Email support</li>
+      </ul>
+      <a href="#products" class="cta-secondary" style="width:100%;justify-content:center">Choose a Workflow &rarr;</a>
+      <div class="pricing-secure">&#x1F512; Secure checkout powered by LemonSqueezy</div>
+    </div>
+    <!-- Bundle -->
+    <div class="pricing-card featured">
+      <div class="popular-badge">Most Popular</div>
+      <div class="pricing-title">Complete Bundle</div>
+      <div class="pricing-price"><span class="original">$145</span>$97</div>
+      <div class="pricing-save">Save $48</div>
+      <p class="pricing-daily">$0.53/day &mdash; less than a coffee</p>
+      <ul class="pricing-features">
+        <li>All 5 production-ready workflows</li>
+        <li>Step-by-step setup guides</li>
+        <li>Bonus documentation</li>
+        <li>Lifetime updates</li>
+        <li>Priority email support</li>
+      </ul>
+      <a href="https://STORE.lemonsqueezy.com/checkout/buy/BUNDLE_ID" class="cta-primary" style="width:100%;justify-content:center">Get The Complete Bundle &rarr;</a>
+      <div class="pricing-secure">&#x1F512; Secure checkout powered by LemonSqueezy</div>
     </div>
   </div>
 </section>
 
-<!-- PRODUCTS -->
-<section class="products" id="products">
-  <div class="section-header">
-    <h2>Workflows</h2>
-    <p>Each workflow is battle-tested, documented, and ready to deploy.</p>
-  </div>
-  <div class="grid">
-
-    <!-- Auram -->
-    <div class="card">
-      <div class="card-icon">&#x1F4DD;</div>
-      <div class="card-name">Auram</div>
-      <div class="card-tagline">AI Content Factory for Agencies</div>
-      <ul class="card-features">
-        <li>Generate and publish LinkedIn posts automatically</li>
-        <li>AI creates brand-aligned content on schedule</li>
-        <li>Save 10+ hours/week</li>
-      </ul>
-      <div class="card-bottom">
-        <div class="price">$29 <span>one-time</span></div>
-        <a href="https://STORE.lemonsqueezy.com/checkout/buy/AURAM_ID" class="buy-btn">
-          Buy Now
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75"/></svg>
-        </a>
-      </div>
-    </div>
-
-    <!-- Chorus -->
-    <div class="card">
-      <div class="card-icon">&#x1F4AC;</div>
-      <div class="card-name">Chorus</div>
-      <div class="card-tagline">AI Review Responder for E-Commerce</div>
-      <ul class="card-features">
-        <li>Automatically respond to every customer review</li>
-        <li>Sentiment-aware AI replies 24/7</li>
-        <li>Never miss a review again</li>
-      </ul>
-      <div class="card-bottom">
-        <div class="price">$29 <span>one-time</span></div>
-        <a href="https://STORE.lemonsqueezy.com/checkout/buy/CHORUS_ID" class="buy-btn">
-          Buy Now
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75"/></svg>
-        </a>
-      </div>
-    </div>
-
-    <!-- Sentinel -->
-    <div class="card">
-      <div class="card-icon">&#x1F3AF;</div>
-      <div class="card-name">Sentinel</div>
-      <div class="card-tagline">AI Lead Qualifier for Real Estate</div>
-      <ul class="card-features">
-        <li>Capture leads, qualify with AI instantly</li>
-        <li>Automatic personalized follow-ups</li>
-        <li>Convert 3x more leads</li>
-      </ul>
-      <div class="card-bottom">
-        <div class="price">$29 <span>one-time</span></div>
-        <a href="https://STORE.lemonsqueezy.com/checkout/buy/SENTINEL_ID" class="buy-btn">
-          Buy Now
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75"/></svg>
-        </a>
-      </div>
-    </div>
-
-    <!-- Sift -->
-    <div class="card">
-      <div class="card-icon">&#x1F4E8;</div>
-      <div class="card-name">Sift</div>
-      <div class="card-tagline">Smart Email Triage</div>
-      <ul class="card-features">
-        <li>AI classifies urgent, simple, and spam</li>
-        <li>Auto-responds to simple emails</li>
-        <li>Reclaim 2 hours/day</li>
-      </ul>
-      <div class="card-bottom">
-        <div class="price">$29 <span>one-time</span></div>
-        <a href="https://STORE.lemonsqueezy.com/checkout/buy/SIFT_ID" class="buy-btn">
-          Buy Now
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75"/></svg>
-        </a>
-      </div>
-    </div>
-
-    <!-- Prism -->
-    <div class="card">
-      <div class="card-icon">&#x1F308;</div>
-      <div class="card-name">Prism</div>
-      <div class="card-tagline">Blog to Social Media Pipeline</div>
-      <ul class="card-features">
-        <li>One blog post becomes 5 social media posts</li>
-        <li>Platform-optimized for LinkedIn, X, Instagram, Facebook</li>
-        <li>5x content output with zero effort</li>
-      </ul>
-      <div class="card-bottom">
-        <div class="price">$29 <span>one-time</span></div>
-        <a href="https://STORE.lemonsqueezy.com/checkout/buy/PRISM_ID" class="buy-btn">
-          Buy Now
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75"/></svg>
-        </a>
-      </div>
-    </div>
-
+<!-- ── GUARANTEE ── -->
+<section class="alt-bg">
+  <div class="guarantee reveal">
+    <div class="guarantee-icon">&#x1F6E1;&#xFE0F;</div>
+    <h2>30-Day Money-Back Guarantee</h2>
+    <p>Try it risk-free. If it doesn't save you time, email us for a full refund. No questions asked.</p>
+    <p class="pricing-secure" style="justify-content:center">&#x1F512; Secure checkout powered by LemonSqueezy</p>
   </div>
 </section>
 
-<!-- FAQ -->
+<!-- ── FAQ ── -->
 <section>
-  <div class="section-header">
-    <h2>Questions</h2>
+  <div class="section-header reveal">
+    <h2>Frequently Asked Questions</h2>
   </div>
-  <div class="faq">
-    <div class="faq-item">
-      <div class="faq-q">Do I need coding experience?</div>
-      <div class="faq-a">No. Every workflow is a JSON file you import into n8n with one click. Documentation is included.</div>
-    </div>
-    <div class="faq-item">
-      <div class="faq-q">What version of n8n do I need?</div>
-      <div class="faq-a">All workflows are tested on n8n v1.x (self-hosted and n8n Cloud).</div>
-    </div>
-    <div class="faq-item">
-      <div class="faq-q">Can I modify the workflows?</div>
-      <div class="faq-a">Absolutely. They are yours to customize, extend, and adapt to your business.</div>
-    </div>
-    <div class="faq-item">
-      <div class="faq-q">Is there a refund policy?</div>
-      <div class="faq-a">Yes. If a workflow does not work as described, you get a full refund within 14 days.</div>
-    </div>
+  <div class="faq-list reveal">
+    <details>
+      <summary>What if I'm a complete beginner?</summary>
+      <div class="faq-answer">Every workflow comes with step-by-step setup guides. No coding needed &mdash; if you can copy-paste, you can use these. Most users are up and running in under 20 minutes.</div>
+    </details>
+    <details>
+      <summary>Is this really worth $29?</summary>
+      <div class="faq-answer">Let's do the math: if a workflow saves you just 2 hours/week at $50/hr, that's $400/month in value &mdash; from a one-time $29 investment. The bundle at $97 pays for itself in the first week.</div>
+    </details>
+    <details>
+      <summary>What if it doesn't work for me?</summary>
+      <div class="faq-answer">You're covered by our 30-day money-back guarantee. If it doesn't save you time, email us and we'll refund every penny. No questions asked.</div>
+    </details>
+    <details>
+      <summary>Do I need to pay for AI services?</summary>
+      <div class="faq-answer">Workflows come pre-configured to work with Google Gemini's free tier. You can optionally upgrade to other AI providers, but it's not required to get started.</div>
+    </details>
+    <details>
+      <summary>How is this different from free n8n templates?</summary>
+      <div class="faq-answer">Free templates are starting points. These are production-ready systems with error handling, retry logic, edge case coverage, and detailed documentation. They're built for businesses that need reliability, not experiments.</div>
+    </details>
+    <details>
+      <summary>How quickly will I see results?</summary>
+      <div class="faq-answer">Most users complete setup in under 20 minutes. Your first automated task runs immediately after. Many users report saving 5+ hours in their first week.</div>
+    </details>
   </div>
 </section>
 
-<!-- CTA BANNER -->
-<section class="cta-banner">
-  <h2>Ready to automate?</h2>
-  <p>Pick a workflow above and have it running in under 10 minutes.</p>
-  <a href="#products" class="hero-cta">Browse Workflows</a>
+<!-- ── FINAL CTA ── -->
+<section class="final-cta">
+  <div class="reveal">
+    <h2>Ready to stop doing manually what AI can automate?</h2>
+    <a href="https://STORE.lemonsqueezy.com/checkout/buy/BUNDLE_ID" class="cta-primary">Get The Complete Bundle &mdash; $97 &rarr;</a>
+    <p class="sub">Join 800+ businesses. 30-day money-back guarantee.</p>
+  </div>
 </section>
 
-<!-- FOOTER -->
+<!-- ── FOOTER ── -->
 <footer>
   &copy; 2026 AutoFlow. All rights reserved.
 </footer>
+
+<script>
+// ── Countdown Timer ──
+(function(){
+  const deadline = new Date('2026-07-15T23:59:59Z').getTime();
+  const days = document.getElementById('cd-days');
+  const hours = document.getElementById('cd-hours');
+  const mins = document.getElementById('cd-mins');
+  const secs = document.getElementById('cd-secs');
+
+  function update(){
+    const now = Date.now();
+    const diff = Math.max(0, deadline - now);
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff % 86400000) / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    days.textContent = d + 'd';
+    hours.textContent = h + 'h';
+    mins.textContent = m + 'm';
+    secs.textContent = s + 's';
+    if(diff <= 0) clearInterval(timer);
+  }
+  update();
+  const timer = setInterval(update, 1000);
+})();
+
+// ── Animated Counter ──
+(function(){
+  const el = document.getElementById('counter');
+  const target = parseInt(el.dataset.target, 10);
+  let started = false;
+
+  function animateCount(){
+    if(started) return;
+    started = true;
+    const duration = 2000;
+    const start = performance.now();
+
+    function step(now){
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const current = Math.floor(eased * target);
+      el.textContent = current + '+';
+      if(progress < 1) requestAnimationFrame(step);
+      else el.textContent = target + '+';
+    }
+    requestAnimationFrame(step);
+  }
+
+  const observer = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting) animateCount();
+    });
+  }, {threshold: 0.3});
+  observer.observe(el);
+})();
+
+// ── Scroll Reveal ──
+(function(){
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        entry.target.classList.add('visible');
+      }
+    });
+  }, {threshold: 0.1, rootMargin: '0px 0px -40px 0px'});
+  reveals.forEach(function(el){ observer.observe(el); });
+})();
+</script>
 
 </body>
 </html>
