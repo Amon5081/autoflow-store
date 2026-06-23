@@ -57,6 +57,89 @@ h1,h2,h3,h4{font-family:'Space Grotesk',sans-serif}
 .reveal{opacity:0;transform:translateY(30px);transition:opacity .7s ease,transform .7s ease}
 .reveal.visible{opacity:1;transform:translateY(0)}
 
+/* ── LANGUAGE SELECTOR ── */
+.lang-selector{
+  position:fixed;
+  top:.45rem;
+  right:1rem;
+  z-index:1001;
+  font-family:'DM Sans',sans-serif;
+}
+.lang-btn{
+  display:flex;
+  align-items:center;
+  gap:.35rem;
+  background:rgba(10,14,26,.85);
+  border:1px solid rgba(255,255,255,.12);
+  color:var(--text);
+  padding:.3rem .65rem;
+  border-radius:8px;
+  font-size:.8rem;
+  font-weight:600;
+  cursor:pointer;
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  transition:border-color .2s,background .2s;
+  line-height:1;
+}
+.lang-btn:hover{
+  border-color:var(--accent);
+  background:rgba(10,14,26,.95);
+}
+.lang-btn .lang-flag{font-size:.95rem;line-height:1}
+.lang-btn .lang-arrow{
+  font-size:.6rem;
+  margin-left:.1rem;
+  transition:transform .2s;
+}
+.lang-selector.open .lang-btn .lang-arrow{transform:rotate(180deg)}
+.lang-dropdown{
+  position:absolute;
+  top:calc(100% + 4px);
+  right:0;
+  min-width:120px;
+  background:rgba(10,14,26,.95);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:8px;
+  overflow:hidden;
+  opacity:0;
+  visibility:hidden;
+  transform:translateY(-4px);
+  transition:opacity .2s,transform .2s,visibility .2s;
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+}
+.lang-selector.open .lang-dropdown{
+  opacity:1;
+  visibility:visible;
+  transform:translateY(0);
+}
+.lang-option{
+  display:flex;
+  align-items:center;
+  gap:.5rem;
+  padding:.55rem .85rem;
+  font-size:.82rem;
+  font-weight:500;
+  color:var(--text-muted);
+  cursor:pointer;
+  transition:background .15s,color .15s;
+  border:none;
+  background:none;
+  width:100%;
+  text-align:left;
+  font-family:'DM Sans',sans-serif;
+}
+.lang-option:hover{
+  background:rgba(0,212,255,.08);
+  color:var(--text);
+}
+.lang-option.active{
+  color:var(--accent);
+  font-weight:600;
+}
+.lang-option .lang-flag{font-size:.95rem}
+
 /* ── URGENCY BAR ── */
 .urgency-bar{
   position:fixed;top:0;left:0;right:0;z-index:1000;
@@ -622,6 +705,8 @@ footer{
   .step:not(:last-child)::after{display:none}
   section{padding:4rem 1rem}
   .urgency-bar{font-size:.78rem;padding:.5rem .75rem}
+  .lang-selector{top:.35rem;right:.5rem}
+  .lang-btn{padding:.25rem .5rem;font-size:.75rem}
 }
 @media(max-width:480px){
   .hero h1{font-size:2rem}
@@ -631,9 +716,26 @@ footer{
 </head>
 <body>
 
+<!-- ── LANGUAGE SELECTOR ── -->
+<div class="lang-selector" id="langSelector">
+  <button class="lang-btn" id="langBtn" aria-label="Select language">
+    <span class="lang-flag" id="langFlag">&#127482;&#127480;</span>
+    <span id="langLabel">EN</span>
+    <span class="lang-arrow">&#9660;</span>
+  </button>
+  <div class="lang-dropdown" id="langDropdown">
+    <button class="lang-option active" data-lang="en" id="langOptEn">
+      <span class="lang-flag">&#127482;&#127480;</span> English
+    </button>
+    <button class="lang-option" data-lang="es" id="langOptEs">
+      <span class="lang-flag">&#127466;&#127480;</span> Español
+    </button>
+  </div>
+</div>
+
 <!-- ── URGENCY BAR ── -->
 <div class="urgency-bar">
-  Launch Price &mdash; Save 33% on the Complete Bundle. Ends July 15th
+  <span data-i18n="urgency.text">Launch Price &mdash; Save 33% on the Complete Bundle. Ends July 15th</span>
   <span class="countdown" id="countdown">
     <span class="countdown-unit" id="cd-days">00d</span>
     <span class="countdown-unit" id="cd-hours">00h</span>
@@ -645,14 +747,14 @@ footer{
 <!-- ── HERO ── -->
 <section class="hero">
   <div class="logo">Auto<span>Flow</span></div>
-  <h1>Automate Your Business While You Sleep</h1>
-  <p class="hero-sub">Production-ready n8n workflows that save you 10+ hours/week</p>
-  <a href="#pricing" class="hero-cta">Get My Workflows &rarr;</a>
+  <h1 data-i18n="hero.title">Automate Your Business While You Sleep</h1>
+  <p class="hero-sub" data-i18n="hero.subtitle">Production-ready n8n workflows that save you 10+ hours/week</p>
+  <a href="#pricing" class="hero-cta" data-i18n="hero.cta">Get My Workflows &rarr;</a>
   <div class="trust-line">
     <span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
-    4.9/5 &mdash; Trusted by 800+ businesses
+    <span data-i18n="hero.trust">4.9/5 &mdash; Trusted by 800+ businesses</span>
   </div>
-  <p class="micro">30-day money-back guarantee. No questions asked.</p>
+  <p class="micro" data-i18n="hero.micro">30-day money-back guarantee. No questions asked.</p>
 </section>
 
 <!-- ── SOCIAL PROOF ── -->
@@ -660,184 +762,184 @@ footer{
   <div class="social-proof reveal">
     <div class="counter-block">
       <div class="counter-number" id="counter" data-target="847">0+</div>
-      <div class="counter-label">workflows delivered</div>
+      <div class="counter-label" data-i18n="social.counter.label">workflows delivered</div>
     </div>
     <div class="testimonials">
       <div class="testimonial">
         <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-        <p class="testimonial-text">"Saved me 12 hours/week. I went from managing 4 clients to 7."</p>
-        <div class="testimonial-author">Sarah K., Marketing Agency Owner</div>
+        <p class="testimonial-text" data-i18n="social.testimonial1.text">"Saved me 12 hours/week. I went from managing 4 clients to 7."</p>
+        <div class="testimonial-author" data-i18n="social.testimonial1.author">Sarah K., Marketing Agency Owner</div>
       </div>
       <div class="testimonial">
         <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-        <p class="testimonial-text">"Set it up in 20 minutes. First automated response went out within an hour."</p>
-        <div class="testimonial-author">Marcus T., Shopify Store Owner</div>
+        <p class="testimonial-text" data-i18n="social.testimonial2.text">"Set it up in 20 minutes. First automated response went out within an hour."</p>
+        <div class="testimonial-author" data-i18n="social.testimonial2.author">Marcus T., Shopify Store Owner</div>
       </div>
       <div class="testimonial">
         <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-        <p class="testimonial-text">"My inbox is finally under control. I actually leave work on time now."</p>
-        <div class="testimonial-author">Ana R., Freelance Consultant</div>
+        <p class="testimonial-text" data-i18n="social.testimonial3.text">"My inbox is finally under control. I actually leave work on time now."</p>
+        <div class="testimonial-author" data-i18n="social.testimonial3.author">Ana R., Freelance Consultant</div>
       </div>
     </div>
-    <a href="#pricing" class="cta-primary">Start Automating Now &rarr;</a>
-    <p class="micro" style="margin-top:1rem">30-day money-back guarantee. No questions asked.</p>
+    <a href="#pricing" class="cta-primary" data-i18n="social.cta">Start Automating Now &rarr;</a>
+    <p class="micro" style="margin-top:1rem" data-i18n="social.micro">30-day money-back guarantee. No questions asked.</p>
   </div>
 </section>
 
 <!-- ── PRODUCT SHOWCASE ── -->
 <section id="products">
   <div class="section-header reveal">
-    <h2>5 Workflows. Unlimited Potential.</h2>
+    <h2 data-i18n="products.header">5 Workflows. Unlimited Potential.</h2>
   </div>
   <div class="product-grid">
     <div class="product-card reveal">
       <div class="product-icon">&#x1F4DD;</div>
       <div class="product-name">Auram</div>
-      <div class="product-tagline">AI Content Factory for Agencies</div>
+      <div class="product-tagline" data-i18n="products.auram.tagline">AI Content Factory for Agencies</div>
       <ul class="product-benefits">
-        <li>Never stare at a blank content calendar again</li>
-        <li>Scale to more clients without hiring writers</li>
-        <li>Content that sounds like YOUR brand, not a robot</li>
+        <li data-i18n="products.auram.benefit1">Never stare at a blank content calendar again</li>
+        <li data-i18n="products.auram.benefit2">Scale to more clients without hiring writers</li>
+        <li data-i18n="products.auram.benefit3">Content that sounds like YOUR brand, not a robot</li>
       </ul>
       <div class="product-price">
         <span class="price-original">$49</span>
         <span class="price-current">$29</span>
-        <span class="price-tag">one-time</span>
+        <span class="price-tag" data-i18n="products.price.tag">one-time</span>
       </div>
     </div>
     <div class="product-card reveal">
       <div class="product-icon">&#x1F4AC;</div>
       <div class="product-name">Chorus</div>
-      <div class="product-tagline">AI Review Responder for E-Commerce</div>
+      <div class="product-tagline" data-i18n="products.chorus.tagline">AI Review Responder for E-Commerce</div>
       <ul class="product-benefits">
-        <li>Turn negative reviews into recovery opportunities</li>
-        <li>Respond to every review within minutes, 24/7</li>
-        <li>Build trust that drives repeat purchases</li>
+        <li data-i18n="products.chorus.benefit1">Turn negative reviews into recovery opportunities</li>
+        <li data-i18n="products.chorus.benefit2">Respond to every review within minutes, 24/7</li>
+        <li data-i18n="products.chorus.benefit3">Build trust that drives repeat purchases</li>
       </ul>
       <div class="product-price">
         <span class="price-original">$49</span>
         <span class="price-current">$29</span>
-        <span class="price-tag">one-time</span>
+        <span class="price-tag" data-i18n="products.price.tag">one-time</span>
       </div>
     </div>
     <div class="product-card reveal">
       <div class="product-icon">&#x1F3AF;</div>
       <div class="product-name">Sentinel</div>
-      <div class="product-tagline">AI Lead Qualifier for Real Estate</div>
+      <div class="product-tagline" data-i18n="products.sentinel.tagline">AI Lead Qualifier for Real Estate</div>
       <ul class="product-benefits">
-        <li>Know which leads are ready to buy before you call</li>
-        <li>Follow up automatically &mdash; never lose a hot lead</li>
-        <li>Close 3x more deals with AI-qualified prospects</li>
+        <li data-i18n="products.sentinel.benefit1">Know which leads are ready to buy before you call</li>
+        <li data-i18n="products.sentinel.benefit2">Follow up automatically &mdash; never lose a hot lead</li>
+        <li data-i18n="products.sentinel.benefit3">Close 3x more deals with AI-qualified prospects</li>
       </ul>
       <div class="product-price">
         <span class="price-original">$49</span>
         <span class="price-current">$29</span>
-        <span class="price-tag">one-time</span>
+        <span class="price-tag" data-i18n="products.price.tag">one-time</span>
       </div>
     </div>
     <div class="product-card reveal">
       <div class="product-icon">&#x1F4E8;</div>
       <div class="product-name">Sift</div>
-      <div class="product-tagline">Smart Email Triage</div>
+      <div class="product-tagline" data-i18n="products.sift.tagline">Smart Email Triage</div>
       <ul class="product-benefits">
-        <li>Urgent emails surface instantly &mdash; spam disappears</li>
-        <li>Auto-replies handle the routine so you don't have to</li>
-        <li>Reclaim 2+ hours every single day</li>
+        <li data-i18n="products.sift.benefit1">Urgent emails surface instantly &mdash; spam disappears</li>
+        <li data-i18n="products.sift.benefit2">Auto-replies handle the routine so you don't have to</li>
+        <li data-i18n="products.sift.benefit3">Reclaim 2+ hours every single day</li>
       </ul>
       <div class="product-price">
         <span class="price-original">$49</span>
         <span class="price-current">$29</span>
-        <span class="price-tag">one-time</span>
+        <span class="price-tag" data-i18n="products.price.tag">one-time</span>
       </div>
     </div>
     <div class="product-card reveal">
       <div class="product-icon">&#x1F308;</div>
       <div class="product-name">Prism</div>
-      <div class="product-tagline">Blog to Social Media Pipeline</div>
+      <div class="product-tagline" data-i18n="products.prism.tagline">Blog to Social Media Pipeline</div>
       <ul class="product-benefits">
-        <li>One blog post becomes 5 platform-optimized social posts</li>
-        <li>Stay visible everywhere without the content grind</li>
-        <li>5x your content output with zero extra effort</li>
+        <li data-i18n="products.prism.benefit1">One blog post becomes 5 platform-optimized social posts</li>
+        <li data-i18n="products.prism.benefit2">Stay visible everywhere without the content grind</li>
+        <li data-i18n="products.prism.benefit3">5x your content output with zero extra effort</li>
       </ul>
       <div class="product-price">
         <span class="price-original">$49</span>
         <span class="price-current">$29</span>
-        <span class="price-tag">one-time</span>
+        <span class="price-tag" data-i18n="products.price.tag">one-time</span>
       </div>
     </div>
   </div>
   <div class="product-cta-section reveal">
-    <a href="https://STORE.lemonsqueezy.com/checkout/buy/BUNDLE_ID" class="cta-primary">Get All 5 for $97 &rarr;</a>
-    <p class="secondary-text">Or pick any single workflow for $29</p>
-    <p class="micro" style="margin-top:.75rem">30-day money-back guarantee. No questions asked.</p>
+    <a href="https://STORE.lemonsqueezy.com/checkout/buy/BUNDLE_ID" class="cta-primary" data-i18n="products.cta">Get All 5 for $97 &rarr;</a>
+    <p class="secondary-text" data-i18n="products.secondary">Or pick any single workflow for $29</p>
+    <p class="micro" style="margin-top:.75rem" data-i18n="products.micro">30-day money-back guarantee. No questions asked.</p>
   </div>
 </section>
 
 <!-- ── HOW IT WORKS ── -->
 <section class="alt-bg">
   <div class="section-header reveal">
-    <h2>Up and Running in 20 Minutes</h2>
+    <h2 data-i18n="howit.header">Up and Running in 20 Minutes</h2>
   </div>
   <div class="steps-row reveal">
     <div class="step">
       <div class="step-number">1</div>
-      <h3>Purchase &amp; Download</h3>
-      <p>Instant access after checkout</p>
+      <h3 data-i18n="howit.step1.title">Purchase &amp; Download</h3>
+      <p data-i18n="howit.step1.text">Instant access after checkout</p>
     </div>
     <div class="step">
       <div class="step-number">2</div>
-      <h3>Import into n8n</h3>
-      <p>Paste the JSON, no coding needed</p>
+      <h3 data-i18n="howit.step2.title">Import into n8n</h3>
+      <p data-i18n="howit.step2.text">Paste the JSON, no coding needed</p>
     </div>
     <div class="step">
       <div class="step-number">3</div>
-      <h3>Connect &amp; Run</h3>
-      <p>Add your API keys, activate</p>
+      <h3 data-i18n="howit.step3.title">Connect &amp; Run</h3>
+      <p data-i18n="howit.step3.text">Add your API keys, activate</p>
     </div>
   </div>
   <div style="text-align:center" class="reveal">
-    <div class="setup-badge">&#9889; Set up in under 20 minutes</div>
+    <div class="setup-badge" data-i18n="howit.badge">&#9889; Set up in under 20 minutes</div>
     <br>
-    <a href="#pricing" class="cta-primary">Get My Workflows &rarr;</a>
+    <a href="#pricing" class="cta-primary" data-i18n="howit.cta">Get My Workflows &rarr;</a>
   </div>
 </section>
 
 <!-- ── PRICING ── -->
 <section id="pricing">
   <div class="section-header reveal">
-    <h2>Simple, One-Time Pricing</h2>
-    <p>Pay once. Use forever. No subscriptions.</p>
+    <h2 data-i18n="pricing.header.title">Simple, One-Time Pricing</h2>
+    <p data-i18n="pricing.header.subtitle">Pay once. Use forever. No subscriptions.</p>
   </div>
   <div class="pricing-grid reveal">
     <!-- Single -->
     <div class="pricing-card">
-      <div class="pricing-title">Single Workflow</div>
+      <div class="pricing-title" data-i18n="pricing.single.title">Single Workflow</div>
       <div class="pricing-price">$29</div>
-      <p style="color:var(--text-muted);font-size:.95rem;margin-bottom:1.5rem">Pick any one workflow</p>
+      <p style="color:var(--text-muted);font-size:.95rem;margin-bottom:1.5rem" data-i18n="pricing.single.pick">Pick any one workflow</p>
       <ul class="pricing-features">
-        <li>Production-ready workflow JSON</li>
-        <li>Step-by-step setup guide</li>
-        <li>Email support</li>
+        <li data-i18n="pricing.single.feature1">Production-ready workflow JSON</li>
+        <li data-i18n="pricing.single.feature2">Step-by-step setup guide</li>
+        <li data-i18n="pricing.single.feature3">Email support</li>
       </ul>
-      <a href="#products" class="cta-secondary" style="width:100%;justify-content:center">Choose a Workflow &rarr;</a>
-      <div class="pricing-secure">&#x1F512; Secure checkout powered by LemonSqueezy</div>
+      <a href="#products" class="cta-secondary" style="width:100%;justify-content:center" data-i18n="pricing.single.cta">Choose a Workflow &rarr;</a>
+      <div class="pricing-secure" data-i18n="pricing.secure">&#x1F512; Secure checkout powered by LemonSqueezy</div>
     </div>
     <!-- Bundle -->
     <div class="pricing-card featured">
-      <div class="popular-badge">Most Popular</div>
-      <div class="pricing-title">Complete Bundle</div>
+      <div class="popular-badge" data-i18n="pricing.bundle.badge">Most Popular</div>
+      <div class="pricing-title" data-i18n="pricing.bundle.title">Complete Bundle</div>
       <div class="pricing-price"><span class="original">$145</span>$97</div>
-      <div class="pricing-save">Save $48</div>
-      <p class="pricing-daily">$0.53/day &mdash; less than a coffee</p>
+      <div class="pricing-save" data-i18n="pricing.bundle.save">Save $48</div>
+      <p class="pricing-daily" data-i18n="pricing.bundle.daily">$0.53/day &mdash; less than a coffee</p>
       <ul class="pricing-features">
-        <li>All 5 production-ready workflows</li>
-        <li>Step-by-step setup guides</li>
-        <li>Bonus documentation</li>
-        <li>Lifetime updates</li>
-        <li>Priority email support</li>
+        <li data-i18n="pricing.bundle.feature1">All 5 production-ready workflows</li>
+        <li data-i18n="pricing.bundle.feature2">Step-by-step setup guides</li>
+        <li data-i18n="pricing.bundle.feature3">Bonus documentation</li>
+        <li data-i18n="pricing.bundle.feature4">Lifetime updates</li>
+        <li data-i18n="pricing.bundle.feature5">Priority email support</li>
       </ul>
-      <a href="https://STORE.lemonsqueezy.com/checkout/buy/BUNDLE_ID" class="cta-primary" style="width:100%;justify-content:center">Get The Complete Bundle &rarr;</a>
-      <div class="pricing-secure">&#x1F512; Secure checkout powered by LemonSqueezy</div>
+      <a href="https://STORE.lemonsqueezy.com/checkout/buy/BUNDLE_ID" class="cta-primary" style="width:100%;justify-content:center" data-i18n="pricing.bundle.cta">Get The Complete Bundle &rarr;</a>
+      <div class="pricing-secure" data-i18n="pricing.secure">&#x1F512; Secure checkout powered by LemonSqueezy</div>
     </div>
   </div>
 </section>
@@ -846,41 +948,41 @@ footer{
 <section class="alt-bg">
   <div class="guarantee reveal">
     <div class="guarantee-icon">&#x1F6E1;&#xFE0F;</div>
-    <h2>30-Day Money-Back Guarantee</h2>
-    <p>Try it risk-free. If it doesn't save you time, email us for a full refund. No questions asked.</p>
-    <p class="pricing-secure" style="justify-content:center">&#x1F512; Secure checkout powered by LemonSqueezy</p>
+    <h2 data-i18n="guarantee.title">30-Day Money-Back Guarantee</h2>
+    <p data-i18n="guarantee.text">Try it risk-free. If it doesn't save you time, email us for a full refund. No questions asked.</p>
+    <p class="pricing-secure" style="justify-content:center" data-i18n="guarantee.secure">&#x1F512; Secure checkout powered by LemonSqueezy</p>
   </div>
 </section>
 
 <!-- ── FAQ ── -->
 <section>
   <div class="section-header reveal">
-    <h2>Frequently Asked Questions</h2>
+    <h2 data-i18n="faq.header">Frequently Asked Questions</h2>
   </div>
   <div class="faq-list reveal">
     <details>
-      <summary>What if I'm a complete beginner?</summary>
-      <div class="faq-answer">Every workflow comes with step-by-step setup guides. No coding needed &mdash; if you can copy-paste, you can use these. Most users are up and running in under 20 minutes.</div>
+      <summary data-i18n="faq.q1.question">What if I'm a complete beginner?</summary>
+      <div class="faq-answer" data-i18n="faq.q1.answer">Every workflow comes with step-by-step setup guides. No coding needed &mdash; if you can copy-paste, you can use these. Most users are up and running in under 20 minutes.</div>
     </details>
     <details>
-      <summary>Is this really worth $29?</summary>
-      <div class="faq-answer">Let's do the math: if a workflow saves you just 2 hours/week at $50/hr, that's $400/month in value &mdash; from a one-time $29 investment. The bundle at $97 pays for itself in the first week.</div>
+      <summary data-i18n="faq.q2.question">Is this really worth $29?</summary>
+      <div class="faq-answer" data-i18n="faq.q2.answer">Let's do the math: if a workflow saves you just 2 hours/week at $50/hr, that's $400/month in value &mdash; from a one-time $29 investment. The bundle at $97 pays for itself in the first week.</div>
     </details>
     <details>
-      <summary>What if it doesn't work for me?</summary>
-      <div class="faq-answer">You're covered by our 30-day money-back guarantee. If it doesn't save you time, email us and we'll refund every penny. No questions asked.</div>
+      <summary data-i18n="faq.q3.question">What if it doesn't work for me?</summary>
+      <div class="faq-answer" data-i18n="faq.q3.answer">You're covered by our 30-day money-back guarantee. If it doesn't save you time, email us and we'll refund every penny. No questions asked.</div>
     </details>
     <details>
-      <summary>Do I need to pay for AI services?</summary>
-      <div class="faq-answer">Workflows come pre-configured to work with Google Gemini's free tier. You can optionally upgrade to other AI providers, but it's not required to get started.</div>
+      <summary data-i18n="faq.q4.question">Do I need to pay for AI services?</summary>
+      <div class="faq-answer" data-i18n="faq.q4.answer">Workflows come pre-configured to work with Google Gemini's free tier. You can optionally upgrade to other AI providers, but it's not required to get started.</div>
     </details>
     <details>
-      <summary>How is this different from free n8n templates?</summary>
-      <div class="faq-answer">Free templates are starting points. These are production-ready systems with error handling, retry logic, edge case coverage, and detailed documentation. They're built for businesses that need reliability, not experiments.</div>
+      <summary data-i18n="faq.q5.question">How is this different from free n8n templates?</summary>
+      <div class="faq-answer" data-i18n="faq.q5.answer">Free templates are starting points. These are production-ready systems with error handling, retry logic, edge case coverage, and detailed documentation. They're built for businesses that need reliability, not experiments.</div>
     </details>
     <details>
-      <summary>How quickly will I see results?</summary>
-      <div class="faq-answer">Most users complete setup in under 20 minutes. Your first automated task runs immediately after. Many users report saving 5+ hours in their first week.</div>
+      <summary data-i18n="faq.q6.question">How quickly will I see results?</summary>
+      <div class="faq-answer" data-i18n="faq.q6.answer">Most users complete setup in under 20 minutes. Your first automated task runs immediately after. Many users report saving 5+ hours in their first week.</div>
     </details>
   </div>
 </section>
@@ -888,60 +990,372 @@ footer{
 <!-- ── FINAL CTA ── -->
 <section class="final-cta">
   <div class="reveal">
-    <h2>Ready to stop doing manually what AI can automate?</h2>
-    <a href="https://STORE.lemonsqueezy.com/checkout/buy/BUNDLE_ID" class="cta-primary">Get The Complete Bundle &mdash; $97 &rarr;</a>
-    <p class="sub">Join 800+ businesses. 30-day money-back guarantee.</p>
+    <h2 data-i18n="final.title">Ready to stop doing manually what AI can automate?</h2>
+    <a href="https://STORE.lemonsqueezy.com/checkout/buy/BUNDLE_ID" class="cta-primary" data-i18n="final.cta">Get The Complete Bundle &mdash; $97 &rarr;</a>
+    <p class="sub" data-i18n="final.sub">Join 800+ businesses. 30-day money-back guarantee.</p>
   </div>
 </section>
 
 <!-- ── FOOTER ── -->
 <footer>
-  &copy; 2026 AutoFlow. All rights reserved.
+  <span data-i18n="footer.copyright">&copy; 2026 AutoFlow. All rights reserved.</span>
 </footer>
 
 <script>
+// ── Translations ──
+var translations = {
+  en: {
+    // Meta
+    "meta.title": "AutoFlow — AI-Powered n8n Workflows That Save You 10+ Hours/Week",
+    "meta.description": "Production-ready n8n automation workflows for agencies, e-commerce, real estate, and freelancers. Set up in 20 minutes. 30-day money-back guarantee.",
+
+    // Urgency bar
+    "urgency.text": "Launch Price &mdash; Save 33% on the Complete Bundle. Ends July 15th",
+
+    // Hero
+    "hero.title": "Automate Your Business While You Sleep",
+    "hero.subtitle": "Production-ready n8n workflows that save you 10+ hours/week",
+    "hero.cta": "Get My Workflows &rarr;",
+    "hero.trust": "4.9/5 &mdash; Trusted by 800+ businesses",
+    "hero.micro": "30-day money-back guarantee. No questions asked.",
+
+    // Social proof
+    "social.counter.label": "workflows delivered",
+    "social.testimonial1.text": "“Saved me 12 hours/week. I went from managing 4 clients to 7.”",
+    "social.testimonial1.author": "Sarah K., Marketing Agency Owner",
+    "social.testimonial2.text": "“Set it up in 20 minutes. First automated response went out within an hour.”",
+    "social.testimonial2.author": "Marcus T., Shopify Store Owner",
+    "social.testimonial3.text": "“My inbox is finally under control. I actually leave work on time now.”",
+    "social.testimonial3.author": "Ana R., Freelance Consultant",
+    "social.cta": "Start Automating Now &rarr;",
+    "social.micro": "30-day money-back guarantee. No questions asked.",
+
+    // Products
+    "products.header": "5 Workflows. Unlimited Potential.",
+    "products.auram.tagline": "AI Content Factory for Agencies",
+    "products.auram.benefit1": "Never stare at a blank content calendar again",
+    "products.auram.benefit2": "Scale to more clients without hiring writers",
+    "products.auram.benefit3": "Content that sounds like YOUR brand, not a robot",
+    "products.chorus.tagline": "AI Review Responder for E-Commerce",
+    "products.chorus.benefit1": "Turn negative reviews into recovery opportunities",
+    "products.chorus.benefit2": "Respond to every review within minutes, 24/7",
+    "products.chorus.benefit3": "Build trust that drives repeat purchases",
+    "products.sentinel.tagline": "AI Lead Qualifier for Real Estate",
+    "products.sentinel.benefit1": "Know which leads are ready to buy before you call",
+    "products.sentinel.benefit2": "Follow up automatically &mdash; never lose a hot lead",
+    "products.sentinel.benefit3": "Close 3x more deals with AI-qualified prospects",
+    "products.sift.tagline": "Smart Email Triage",
+    "products.sift.benefit1": "Urgent emails surface instantly &mdash; spam disappears",
+    "products.sift.benefit2": "Auto-replies handle the routine so you don't have to",
+    "products.sift.benefit3": "Reclaim 2+ hours every single day",
+    "products.prism.tagline": "Blog to Social Media Pipeline",
+    "products.prism.benefit1": "One blog post becomes 5 platform-optimized social posts",
+    "products.prism.benefit2": "Stay visible everywhere without the content grind",
+    "products.prism.benefit3": "5x your content output with zero extra effort",
+    "products.price.tag": "one-time",
+    "products.cta": "Get All 5 for $97 &rarr;",
+    "products.secondary": "Or pick any single workflow for $29",
+    "products.micro": "30-day money-back guarantee. No questions asked.",
+
+    // How it works
+    "howit.header": "Up and Running in 20 Minutes",
+    "howit.step1.title": "Purchase & Download",
+    "howit.step1.text": "Instant access after checkout",
+    "howit.step2.title": "Import into n8n",
+    "howit.step2.text": "Paste the JSON, no coding needed",
+    "howit.step3.title": "Connect & Run",
+    "howit.step3.text": "Add your API keys, activate",
+    "howit.badge": "&#9889; Set up in under 20 minutes",
+    "howit.cta": "Get My Workflows &rarr;",
+
+    // Pricing
+    "pricing.header.title": "Simple, One-Time Pricing",
+    "pricing.header.subtitle": "Pay once. Use forever. No subscriptions.",
+    "pricing.single.title": "Single Workflow",
+    "pricing.single.pick": "Pick any one workflow",
+    "pricing.single.feature1": "Production-ready workflow JSON",
+    "pricing.single.feature2": "Step-by-step setup guide",
+    "pricing.single.feature3": "Email support",
+    "pricing.single.cta": "Choose a Workflow &rarr;",
+    "pricing.secure": "&#x1F512; Secure checkout powered by LemonSqueezy",
+    "pricing.bundle.badge": "Most Popular",
+    "pricing.bundle.title": "Complete Bundle",
+    "pricing.bundle.save": "Save $48",
+    "pricing.bundle.daily": "$0.53/day &mdash; less than a coffee",
+    "pricing.bundle.feature1": "All 5 production-ready workflows",
+    "pricing.bundle.feature2": "Step-by-step setup guides",
+    "pricing.bundle.feature3": "Bonus documentation",
+    "pricing.bundle.feature4": "Lifetime updates",
+    "pricing.bundle.feature5": "Priority email support",
+    "pricing.bundle.cta": "Get The Complete Bundle &rarr;",
+
+    // Guarantee
+    "guarantee.title": "30-Day Money-Back Guarantee",
+    "guarantee.text": "Try it risk-free. If it doesn’t save you time, email us for a full refund. No questions asked.",
+    "guarantee.secure": "&#x1F512; Secure checkout powered by LemonSqueezy",
+
+    // FAQ
+    "faq.header": "Frequently Asked Questions",
+    "faq.q1.question": "What if I’m a complete beginner?",
+    "faq.q1.answer": "Every workflow comes with step-by-step setup guides. No coding needed &mdash; if you can copy-paste, you can use these. Most users are up and running in under 20 minutes.",
+    "faq.q2.question": "Is this really worth $29?",
+    "faq.q2.answer": "Let’s do the math: if a workflow saves you just 2 hours/week at $50/hr, that’s $400/month in value &mdash; from a one-time $29 investment. The bundle at $97 pays for itself in the first week.",
+    "faq.q3.question": "What if it doesn’t work for me?",
+    "faq.q3.answer": "You’re covered by our 30-day money-back guarantee. If it doesn’t save you time, email us and we’ll refund every penny. No questions asked.",
+    "faq.q4.question": "Do I need to pay for AI services?",
+    "faq.q4.answer": "Workflows come pre-configured to work with Google Gemini’s free tier. You can optionally upgrade to other AI providers, but it’s not required to get started.",
+    "faq.q5.question": "How is this different from free n8n templates?",
+    "faq.q5.answer": "Free templates are starting points. These are production-ready systems with error handling, retry logic, edge case coverage, and detailed documentation. They’re built for businesses that need reliability, not experiments.",
+    "faq.q6.question": "How quickly will I see results?",
+    "faq.q6.answer": "Most users complete setup in under 20 minutes. Your first automated task runs immediately after. Many users report saving 5+ hours in their first week.",
+
+    // Final CTA
+    "final.title": "Ready to stop doing manually what AI can automate?",
+    "final.cta": "Get The Complete Bundle &mdash; $97 &rarr;",
+    "final.sub": "Join 800+ businesses. 30-day money-back guarantee.",
+
+    // Footer
+    "footer.copyright": "&copy; 2026 AutoFlow. All rights reserved.",
+
+    // Countdown labels
+    "countdown.d": "d",
+    "countdown.h": "h",
+    "countdown.m": "m",
+    "countdown.s": "s"
+  },
+
+  es: {
+    // Meta
+    "meta.title": "AutoFlow — Flujos de Trabajo n8n con IA que te Ahorran 10+ Horas/Semana",
+    "meta.description": "Flujos de trabajo de automatización n8n listos para producción para agencias, e-commerce, bienes raíces y freelancers. Configuración en 20 minutos. Garantía de devolución de 30 días.",
+
+    // Urgency bar
+    "urgency.text": "Precio de Lanzamiento &mdash; Ahorra 33% en el Paquete Completo. Hasta el 15 de julio",
+
+    // Hero
+    "hero.title": "Automatiza tu Negocio Mientras Duermes",
+    "hero.subtitle": "Flujos de trabajo n8n listos para producción que te ahorran 10+ horas/semana",
+    "hero.cta": "Obtener Mis Flujos &rarr;",
+    "hero.trust": "4.9/5 &mdash; Más de 800 negocios confían en nosotros",
+    "hero.micro": "Garantía de devolución de 30 días. Sin preguntas.",
+
+    // Social proof
+    "social.counter.label": "flujos de trabajo entregados",
+    "social.testimonial1.text": "“Me ahorra 12 horas/semana. Pasé de gestionar 4 clientes a 7.”",
+    "social.testimonial1.author": "Sarah K., Dueña de Agencia de Marketing",
+    "social.testimonial2.text": "“Lo configuré en 20 minutos. La primera respuesta automática se envió en menos de una hora.”",
+    "social.testimonial2.author": "Marcus T., Dueño de Tienda Shopify",
+    "social.testimonial3.text": "“Mi bandeja de entrada por fin está bajo control. Ahora salgo del trabajo a tiempo.”",
+    "social.testimonial3.author": "Ana R., Consultora Freelance",
+    "social.cta": "Empieza a Automatizar Ahora &rarr;",
+    "social.micro": "Garantía de devolución de 30 días. Sin preguntas.",
+
+    // Products
+    "products.header": "5 Flujos de Trabajo. Potencial Ilimitado.",
+    "products.auram.tagline": "Fábrica de Contenido IA para Agencias",
+    "products.auram.benefit1": "Nunca más te quedes mirando un calendario de contenido vacío",
+    "products.auram.benefit2": "Escala a más clientes sin contratar redactores",
+    "products.auram.benefit3": "Contenido que suena como TU marca, no como un robot",
+    "products.chorus.tagline": "Respondedor de Reseñas IA para E-Commerce",
+    "products.chorus.benefit1": "Convierte reseñas negativas en oportunidades de recuperación",
+    "products.chorus.benefit2": "Responde a cada reseña en minutos, 24/7",
+    "products.chorus.benefit3": "Construye confianza que impulsa compras recurrentes",
+    "products.sentinel.tagline": "Calificador de Leads IA para Bienes Raíces",
+    "products.sentinel.benefit1": "Sabe qué leads están listos para comprar antes de llamar",
+    "products.sentinel.benefit2": "Seguimiento automático &mdash; nunca pierdas un lead caliente",
+    "products.sentinel.benefit3": "Cierra 3x más tratos con prospectos calificados por IA",
+    "products.sift.tagline": "Clasificación Inteligente de Correos",
+    "products.sift.benefit1": "Los correos urgentes aparecen al instante &mdash; el spam desaparece",
+    "products.sift.benefit2": "Las respuestas automáticas manejan lo rutinario por ti",
+    "products.sift.benefit3": "Recupera 2+ horas cada día",
+    "products.prism.tagline": "Pipeline de Blog a Redes Sociales",
+    "products.prism.benefit1": "Un artículo de blog se convierte en 5 publicaciones optimizadas por plataforma",
+    "products.prism.benefit2": "Mantente visible en todas partes sin el desgaste de crear contenido",
+    "products.prism.benefit3": "5x tu producción de contenido sin esfuerzo adicional",
+    "products.price.tag": "pago único",
+    "products.cta": "Obtener los 5 por $97 &rarr;",
+    "products.secondary": "O elige cualquier flujo individual por $29",
+    "products.micro": "Garantía de devolución de 30 días. Sin preguntas.",
+
+    // How it works
+    "howit.header": "Funcionando en 20 Minutos",
+    "howit.step1.title": "Compra y Descarga",
+    "howit.step1.text": "Acceso instantáneo después del pago",
+    "howit.step2.title": "Importa en n8n",
+    "howit.step2.text": "Pega el JSON, sin código necesario",
+    "howit.step3.title": "Conecta y Ejecuta",
+    "howit.step3.text": "Agrega tus claves API, activa",
+    "howit.badge": "&#9889; Configura en menos de 20 minutos",
+    "howit.cta": "Obtener Mis Flujos &rarr;",
+
+    // Pricing
+    "pricing.header.title": "Precio Simple, Pago Único",
+    "pricing.header.subtitle": "Paga una vez. Usa para siempre. Sin suscripciones.",
+    "pricing.single.title": "Flujo Individual",
+    "pricing.single.pick": "Elige cualquier flujo de trabajo",
+    "pricing.single.feature1": "JSON de flujo de trabajo listo para producción",
+    "pricing.single.feature2": "Guía de configuración paso a paso",
+    "pricing.single.feature3": "Soporte por correo electrónico",
+    "pricing.single.cta": "Elegir un Flujo &rarr;",
+    "pricing.secure": "&#x1F512; Pago seguro con LemonSqueezy",
+    "pricing.bundle.badge": "Más Popular",
+    "pricing.bundle.title": "Paquete Completo",
+    "pricing.bundle.save": "Ahorra $48",
+    "pricing.bundle.daily": "$0.53/día &mdash; menos que un café",
+    "pricing.bundle.feature1": "Los 5 flujos de trabajo listos para producción",
+    "pricing.bundle.feature2": "Guías de configuración paso a paso",
+    "pricing.bundle.feature3": "Documentación extra",
+    "pricing.bundle.feature4": "Actualizaciones de por vida",
+    "pricing.bundle.feature5": "Soporte prioritario por correo",
+    "pricing.bundle.cta": "Obtener el Paquete Completo &rarr;",
+
+    // Guarantee
+    "guarantee.title": "Garantía de Devolución de 30 Días",
+    "guarantee.text": "Prueba sin riesgo. Si no te ahorra tiempo, escríbenos para un reembolso completo. Sin preguntas.",
+    "guarantee.secure": "&#x1F512; Pago seguro con LemonSqueezy",
+
+    // FAQ
+    "faq.header": "Preguntas Frecuentes",
+    "faq.q1.question": "¿Qué pasa si soy principiante?",
+    "faq.q1.answer": "Cada flujo incluye guías de configuración paso a paso. No necesitas saber programar &mdash; si puedes copiar y pegar, puedes usar estos flujos. La mayoría de los usuarios están funcionando en menos de 20 minutos.",
+    "faq.q2.question": "¿Realmente vale $29?",
+    "faq.q2.answer": "Hagamos los números: si un flujo te ahorra solo 2 horas/semana a $50/hr, eso son $400/mes en valor &mdash; por una inversión única de $29. El paquete de $97 se paga solo en la primera semana.",
+    "faq.q3.question": "¿Qué pasa si no funciona para mí?",
+    "faq.q3.answer": "Estás cubierto por nuestra garantía de devolución de 30 días. Si no te ahorra tiempo, escríbenos y te devolvemos cada centavo. Sin preguntas.",
+    "faq.q4.question": "¿Necesito pagar por servicios de IA?",
+    "faq.q4.answer": "Los flujos vienen preconfigurados para funcionar con el nivel gratuito de Google Gemini. Opcionalmente puedes usar otros proveedores de IA, pero no es necesario para empezar.",
+    "faq.q5.question": "¿En qué se diferencia de las plantillas gratuitas de n8n?",
+    "faq.q5.answer": "Las plantillas gratuitas son puntos de partida. Estos son sistemas listos para producción con manejo de errores, lógica de reintentos, cobertura de casos especiales y documentación detallada. Están construidos para negocios que necesitan confiabilidad, no experimentos.",
+    "faq.q6.question": "¿Qué tan rápido veré resultados?",
+    "faq.q6.answer": "La mayoría de los usuarios completan la configuración en menos de 20 minutos. Tu primera tarea automatizada se ejecuta inmediatamente después. Muchos usuarios reportan ahorrar 5+ horas en su primera semana.",
+
+    // Final CTA
+    "final.title": "¿Listo para dejar de hacer manualmente lo que la IA puede automatizar?",
+    "final.cta": "Obtener el Paquete Completo &mdash; $97 &rarr;",
+    "final.sub": "Únete a 800+ negocios. Garantía de devolución de 30 días.",
+
+    // Footer
+    "footer.copyright": "&copy; 2026 AutoFlow. Todos los derechos reservados.",
+
+    // Countdown labels
+    "countdown.d": "d",
+    "countdown.h": "h",
+    "countdown.m": "m",
+    "countdown.s": "s"
+  }
+};
+
+// ── Language Switcher ──
+(function(){
+  var currentLang = localStorage.getItem('autoflow-lang') || 'en';
+  var selector = document.getElementById('langSelector');
+  var btn = document.getElementById('langBtn');
+  var flag = document.getElementById('langFlag');
+  var label = document.getElementById('langLabel');
+  var optEn = document.getElementById('langOptEn');
+  var optEs = document.getElementById('langOptEs');
+
+  var flags = {
+    en: '🇺🇸',
+    es: '🇪🇸'
+  };
+  var labels = { en: 'EN', es: 'ES' };
+
+  function applyLanguage(lang) {
+    currentLang = lang;
+    localStorage.setItem('autoflow-lang', lang);
+    document.documentElement.lang = lang;
+
+    // Update selector UI
+    flag.textContent = flags[lang];
+    label.textContent = labels[lang];
+    optEn.classList.toggle('active', lang === 'en');
+    optEs.classList.toggle('active', lang === 'es');
+
+    // Update meta
+    document.title = translations[lang]['meta.title'];
+    var metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) metaDesc.setAttribute('content', translations[lang]['meta.description']);
+
+    // Update all data-i18n elements
+    var elements = document.querySelectorAll('[data-i18n]');
+    for (var i = 0; i < elements.length; i++) {
+      var key = elements[i].getAttribute('data-i18n');
+      if (translations[lang][key] !== undefined) {
+        elements[i].innerHTML = translations[lang][key];
+      }
+    }
+
+    // Close dropdown
+    selector.classList.remove('open');
+  }
+
+  // Toggle dropdown
+  btn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    selector.classList.toggle('open');
+  });
+
+  // Language selection
+  optEn.addEventListener('click', function() { applyLanguage('en'); });
+  optEs.addEventListener('click', function() { applyLanguage('es'); });
+
+  // Close dropdown on outside click
+  document.addEventListener('click', function() {
+    selector.classList.remove('open');
+  });
+  selector.addEventListener('click', function(e) {
+    e.stopPropagation();
+  });
+
+  // Apply saved language on load
+  applyLanguage(currentLang);
+})();
+
 // ── Countdown Timer ──
 (function(){
-  const deadline = new Date('2026-07-15T23:59:59Z').getTime();
-  const days = document.getElementById('cd-days');
-  const hours = document.getElementById('cd-hours');
-  const mins = document.getElementById('cd-mins');
-  const secs = document.getElementById('cd-secs');
+  var deadline = new Date('2026-07-15T23:59:59Z').getTime();
+  var days = document.getElementById('cd-days');
+  var hours = document.getElementById('cd-hours');
+  var mins = document.getElementById('cd-mins');
+  var secs = document.getElementById('cd-secs');
 
   function update(){
-    const now = Date.now();
-    const diff = Math.max(0, deadline - now);
-    const d = Math.floor(diff / 86400000);
-    const h = Math.floor((diff % 86400000) / 3600000);
-    const m = Math.floor((diff % 3600000) / 60000);
-    const s = Math.floor((diff % 60000) / 1000);
-    days.textContent = d + 'd';
-    hours.textContent = h + 'h';
-    mins.textContent = m + 'm';
-    secs.textContent = s + 's';
+    var lang = localStorage.getItem('autoflow-lang') || 'en';
+    var t = translations[lang];
+    var now = Date.now();
+    var diff = Math.max(0, deadline - now);
+    var d = Math.floor(diff / 86400000);
+    var h = Math.floor((diff % 86400000) / 3600000);
+    var m = Math.floor((diff % 3600000) / 60000);
+    var s = Math.floor((diff % 60000) / 1000);
+    days.textContent = d + t['countdown.d'];
+    hours.textContent = h + t['countdown.h'];
+    mins.textContent = m + t['countdown.m'];
+    secs.textContent = s + t['countdown.s'];
     if(diff <= 0) clearInterval(timer);
   }
   update();
-  const timer = setInterval(update, 1000);
+  var timer = setInterval(update, 1000);
 })();
 
 // ── Animated Counter ──
 (function(){
-  const el = document.getElementById('counter');
-  const target = parseInt(el.dataset.target, 10);
-  let started = false;
+  var el = document.getElementById('counter');
+  var target = parseInt(el.dataset.target, 10);
+  var started = false;
 
   function animateCount(){
     if(started) return;
     started = true;
-    const duration = 2000;
-    const start = performance.now();
+    var duration = 2000;
+    var start = performance.now();
 
     function step(now){
-      const elapsed = now - start;
-      const progress = Math.min(elapsed / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      const current = Math.floor(eased * target);
+      var elapsed = now - start;
+      var progress = Math.min(elapsed / duration, 1);
+      var eased = 1 - Math.pow(1 - progress, 3);
+      var current = Math.floor(eased * target);
       el.textContent = current + '+';
       if(progress < 1) requestAnimationFrame(step);
       else el.textContent = target + '+';
@@ -949,7 +1363,7 @@ footer{
     requestAnimationFrame(step);
   }
 
-  const observer = new IntersectionObserver(function(entries){
+  var observer = new IntersectionObserver(function(entries){
     entries.forEach(function(entry){
       if(entry.isIntersecting) animateCount();
     });
@@ -959,8 +1373,8 @@ footer{
 
 // ── Scroll Reveal ──
 (function(){
-  const reveals = document.querySelectorAll('.reveal');
-  const observer = new IntersectionObserver(function(entries){
+  var reveals = document.querySelectorAll('.reveal');
+  var observer = new IntersectionObserver(function(entries){
     entries.forEach(function(entry){
       if(entry.isIntersecting){
         entry.target.classList.add('visible');
